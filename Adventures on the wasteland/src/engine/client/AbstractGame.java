@@ -118,6 +118,7 @@ public abstract class AbstractGame implements Runnable {
 	private void render() {
 		BufferStrategy bs = canvas.getBufferStrategy();
 		if (bs == null) {
+			if(frame != null)
 			canvas.createBufferStrategy(3);
 			return;
 		}
@@ -166,6 +167,12 @@ public abstract class AbstractGame implements Runnable {
 		if (frame == null)
 			return;
 		this.width = width;
+		frame.setSize(width * size, height * size);
+	}
+	
+	public void setSize(int size){
+		if(frame == null) return;
+		this.size = size;
 		frame.setSize(width * size, height * size);
 	}
 
