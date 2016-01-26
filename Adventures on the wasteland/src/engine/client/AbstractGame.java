@@ -160,14 +160,19 @@ public abstract class AbstractGame implements Runnable {
 		if (frame == null)
 			return;
 		this.height = height;
+		setDimensions();
+	}
+
+	private void setDimensions() {
 		frame.setSize(width * size, height * size);
+		screen = new Screen(width, height);
 	}
 
 	public void setPixelsWidth(int width) {
 		if (frame == null)
 			return;
 		this.width = width;
-		frame.setSize(width * size, height * size);
+		setDimensions();
 	}
 	
 	public void setSize(int size){
