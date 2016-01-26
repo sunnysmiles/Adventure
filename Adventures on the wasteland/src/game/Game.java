@@ -1,7 +1,10 @@
 package game;
 
+import java.awt.event.KeyEvent;
+
 import engine.client.AbstractGame;
 import engine.utils.AbstractArt;
+import engine.utils.Input;
 import engine.utils.Rectangle;
 import engine.utils.Screen;
 import engine.utils.SunnyFrame;
@@ -13,6 +16,7 @@ public class Game extends AbstractGame {
 	private Screen screen;
 	private GameVector playerPosition;
 	private GameVector offSet;
+	private Input input;
 
 	// Instantiate and send to sunnyframe
 	public static void main(String[] args) {
@@ -29,6 +33,7 @@ public class Game extends AbstractGame {
 		screen = this.getScreen();
 		playerPosition = new GameVector(32, 32);
 		offSet = new GameVector(0, 0);
+		input = this.getInput();
 	}
 
 	public void update() {
@@ -37,9 +42,29 @@ public class Game extends AbstractGame {
 		// System.out.println("Test output, number of updates = "
 		// + testOutputCounter);
 
+		// Handle User input
+		if (input.jPressed(KeyEvent.VK_A))
+			playerPosition.addThis(new GameVector(-32, 0));
+		if (input.jPressed(KeyEvent.VK_W))
+			playerPosition.addThis(new GameVector(0, -32));
+		if (input.jPressed(KeyEvent.VK_D))
+			playerPosition.addThis(new GameVector(32, 0));
+		if (input.jPressed(KeyEvent.VK_S))
+			playerPosition.addThis(new GameVector(0, 32));
+
 		// Calculate the offSet based on the players position
-		offSet.setX((this.getPixelsWidth() - 32) / 2 - playerPosition.getX());
-		offSet.setY((this.getPixelsHeight() - 32) / 2 - playerPosition.getY());
+		if (playerPosition.getX() + offSet.getX() < (this.getPixelsWidth() - 32) / 2 - 32)
+			offSet.setX((this.getPixelsWidth() - 32) / 2 - 32
+					- playerPosition.getX());
+		if (playerPosition.getX() + offSet.getX() > (this.getPixelsWidth() - 32) / 2 + 32)
+			offSet.setX((this.getPixelsWidth() - 32) / 2 + 32
+					- playerPosition.getX());
+		if (playerPosition.getY() + offSet.getY() < (this.getPixelsHeight() - 32) / 2 - 32)
+			offSet.setY((this.getPixelsHeight() - 32) / 2 - 32
+					- playerPosition.getY());
+		if (playerPosition.getY() + offSet.getY() > (this.getPixelsHeight() - 32) / 2 + 32)
+			offSet.setY((this.getPixelsHeight() - 32) / 2 + 32
+					- playerPosition.getY());
 		draw();
 	}
 
