@@ -8,8 +8,11 @@ import engine.utils.SunnyFrame;
 
 public class Game extends AbstractGame {
 
+	public static final int TILE_SIZE = 32;
 	int testOutputCounter = 0;
 	private Screen screen;
+	private GameVector playerPosition;
+	private GameVector offSet;
 
 	// Instantiate and send to sunnyframe
 	public static void main(String[] args) {
@@ -21,19 +24,33 @@ public class Game extends AbstractGame {
 		screen = this.getScreen();
 		this.setSize(2);
 		this.setDisplayFPS(true);
-
+		this.setPixelsHeight(352);
+		this.setPixelsWidth(352);
+		screen = this.getScreen();
+		playerPosition = new GameVector(32, 32);
+		offSet = new GameVector(0, 0);
 	}
 
 	public void update() {
-		//Draw the background
-		AbstractArt.drawSquare(screen, 0, 0, this.getPixelsWidth(), this.getPixelsHeight(), 0xff000000);
-		
+		// Static non-visual test output
+		// testOutputCounter++;
+		// System.out.println("Test output, number of updates = "
+		// + testOutputCounter);
+
+		// Calculate the offSet based on the players position
+		offSet.setX((this.getPixelsWidth() - 32) / 2 - playerPosition.getX());
+		offSet.setY((this.getPixelsHeight() - 32) / 2 - playerPosition.getY());
+		draw();
+	}
+
+	private void draw() {
+		// Draw the background
+		AbstractArt.drawSquare(screen, 0, 0, this.getPixelsWidth(),
+				this.getPixelsHeight(), 0xff000000);
+
 		// Static visual test output
-		this.setPixelsHeight(320);
-		this.setPixelsWidth(320);
-		screen = this.getScreen();
-		int numberOfColumns = 10;
-		int numberOfRows = 10;
+		int numberOfColumns = 11;
+		int numberOfRows = 11;
 		int rectangleWidth = 32;
 		int rectangleHeight = 32;
 
@@ -45,10 +62,16 @@ public class Game extends AbstractGame {
 			}
 		}
 
-		// Static non-visual test output
-//		testOutputCounter++;
-//		System.out.println("Test output, number of updates = "
-//				+ testOutputCounter);
+		// Draw the player;
+		GameVector playerOnScreenPosition = playerPosition.getOnScreen(offSet);
+		AbstractArt.drawSquare(screen, playerOnScreenPosition.getIntX(),
+				playerOnScreenPosition.getIntY(), 32, 32, 0xff00ff00);
+
+		// Draw reference object
+		GameVector referenceOnScreenPosition = new GameVector(64, 64);
+		referenceOnScreenPosition.setOnScreen(offSet);
+		AbstractArt.drawSquare(screen, referenceOnScreenPosition.getIntX(),
+				referenceOnScreenPosition.getIntY(), 32, 32, 0xff0000ff);
 	}
 
 }
