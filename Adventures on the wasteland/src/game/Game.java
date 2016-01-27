@@ -1,6 +1,7 @@
 package game;
 
 import java.awt.event.KeyEvent;
+import java.util.ArrayList;
 
 import engine.client.AbstractGame;
 import engine.utils.AbstractArt;
@@ -17,6 +18,7 @@ public class Game extends AbstractGame {
 	private GameVector playerPosition;
 	private GameVector offSet;
 	private Input input;
+	private ArrayList<Entity> entities;
 
 	// Instantiate and send to sunnyframe
 	public static void main(String[] args) {
@@ -34,6 +36,10 @@ public class Game extends AbstractGame {
 		playerPosition = new GameVector(32, 32);
 		offSet = new GameVector(0, 0);
 		input = this.getInput();
+		entities = new ArrayList<Entity>();
+		
+		// Import/Add game data
+		entities.add(new Wall(new GameVector(64,64)));
 	}
 
 	public void update() {
@@ -91,12 +97,12 @@ public class Game extends AbstractGame {
 		GameVector playerOnScreenPosition = playerPosition.getOnScreen(offSet);
 		AbstractArt.drawSquare(screen, playerOnScreenPosition.getIntX(),
 				playerOnScreenPosition.getIntY(), 32, 32, 0xff00ff00);
-
-		// Draw reference object
-		GameVector referenceOnScreenPosition = new GameVector(64, 64);
-		referenceOnScreenPosition.setOnScreen(offSet);
-		AbstractArt.drawSquare(screen, referenceOnScreenPosition.getIntX(),
-				referenceOnScreenPosition.getIntY(), 32, 32, 0xff0000ff);
+		
+		// Draw All entities
+		// TODO: Should draw only visible entities.
+		for(Entity e : entities){
+			e.draw(screen, offSet);
+		}
 	}
 
 }
