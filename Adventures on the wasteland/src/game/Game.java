@@ -37,9 +37,9 @@ public class Game extends AbstractGame {
 		offSet = new GameVector(0, 0);
 		input = this.getInput();
 		entities = new ArrayList<Entity>();
-		
+
 		// Import/Add game data
-		entities.add(new Wall(new GameVector(64,64)));
+		entities.add(new Wall(new GameVector(64, 64)));
 	}
 
 	public void update() {
@@ -49,14 +49,18 @@ public class Game extends AbstractGame {
 		// + testOutputCounter);
 
 		// Handle User input
+		GameVector direction = new GameVector(0, 0);
 		if (input.jPressed(KeyEvent.VK_A))
-			playerPosition.addThis(new GameVector(-32, 0));
+			direction.addThis(new GameVector(-1, 0));
 		if (input.jPressed(KeyEvent.VK_W))
-			playerPosition.addThis(new GameVector(0, -32));
+			direction.addThis(new GameVector(0, -1));
 		if (input.jPressed(KeyEvent.VK_D))
-			playerPosition.addThis(new GameVector(32, 0));
+			direction.addThis(new GameVector(1, 0));
 		if (input.jPressed(KeyEvent.VK_S))
-			playerPosition.addThis(new GameVector(0, 32));
+			direction.addThis(new GameVector(0, 1));
+
+		// Move player
+		movePlayer(direction);
 
 		// Calculate the offSet based on the players position
 		if (playerPosition.getX() + offSet.getX() < (this.getPixelsWidth() - 32) / 2 - 32)
@@ -72,6 +76,22 @@ public class Game extends AbstractGame {
 			offSet.setY((this.getPixelsHeight() - 32) / 2 + 32
 					- playerPosition.getY());
 		draw();
+	}
+
+	private void movePlayer(GameVector direction) {
+		// TODO: Optimize number of collision checks
+		// TODO: Player dimensions should be changeable
+		if (direction.getX() > 0)
+			for (Entity e : entities) {
+				if (!e.isSolid())
+					continue;
+				if (playerPosition.getX() + 32 > e.getPosition().getX()
+						&& playerPosition.getX() < e.getPosition().getX()
+								+ e.getWidth()){
+					playerPosition.setX(e.getPosition().getX() - 32);
+				}
+			}
+		;
 	}
 
 	private void draw() {
@@ -97,10 +117,10 @@ public class Game extends AbstractGame {
 		GameVector playerOnScreenPosition = playerPosition.getOnScreen(offSet);
 		AbstractArt.drawSquare(screen, playerOnScreenPosition.getIntX(),
 				playerOnScreenPosition.getIntY(), 32, 32, 0xff00ff00);
-		
+
 		// Draw All entities
 		// TODO: Should draw only visible entities.
-		for(Entity e : entities){
+		for (Entity e : entities) {
 			e.draw(screen, offSet);
 		}
 	}
